@@ -6,16 +6,17 @@ import androidx.lifecycle.LiveData
 import com.fjun.lunchbox.database.Box
 import com.fjun.lunchbox.database.BoxDao
 import com.fjun.lunchbox.database.BoxDatabase
+import com.fjun.lunchbox.database.State
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val boxDao: BoxDao = BoxDatabase.getDatabase(application).boxDao()
 
-    fun getBoxesInFreezer(): LiveData<List<Box>> {
-        return boxDao.loadAllByState(1)
+    fun getBoxesWithState(state: State): LiveData<List<Box>> {
+        return boxDao.getAllByState(state.state)
     }
 
-    fun getBoxesOutsideFreezer(): LiveData<List<Box>> {
-        return boxDao.loadAllByState(2)
+    fun getBoxesWithoutState(state: State): LiveData<List<Box>> {
+        return boxDao.getAllWithoutState(state.state)
     }
 
     fun getAllBoxes(): LiveData<List<Box>> {

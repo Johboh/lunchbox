@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.fjun.lunchbox.database.State
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -27,9 +28,14 @@ class MainActivity : AppCompatActivity() {
         list.layoutManager = LinearLayoutManager(this)
 
         val mainViewModel = ViewModelProviders.of(this)[MainViewModel::class.java]
-        mainViewModel.getAllBoxes().observe(this, Observer { boxes ->
+        mainViewModel.getBoxesWithState(State.FREEZER).observe(this, Observer { boxes ->
             boxes?.let {
-                adapter.setBoxes(boxes)
+                adapter.setFreezerBoxes(boxes)
+            }
+        })
+        mainViewModel.getBoxesWithoutState(State.FREEZER).observe(this, Observer { boxes ->
+            boxes?.let {
+                adapter.setElseBoxes(boxes)
             }
         })
     }

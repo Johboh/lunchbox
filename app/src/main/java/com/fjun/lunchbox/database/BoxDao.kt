@@ -12,7 +12,10 @@ interface BoxDao {
     fun getAll(): LiveData<List<Box>>
 
     @Query("SELECT * FROM boxes WHERE state = (:state) ORDER BY timestamp DESC")
-    fun loadAllByState(state: Int): LiveData<List<Box>>
+    fun getAllByState(state: Int): LiveData<List<Box>>
+
+    @Query("SELECT * FROM boxes WHERE state != (:state) ORDER BY timestamp DESC")
+    fun getAllWithoutState(state: Int): LiveData<List<Box>>
 
     @Insert
     suspend fun insert(boxes: Box)
