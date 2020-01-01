@@ -8,10 +8,10 @@ import androidx.room.Query
 
 @Dao
 interface BoxDao {
-    @Query("SELECT * FROM boxes")
+    @Query("SELECT * FROM boxes ORDER BY timestamp DESC")
     fun getAll(): LiveData<List<Box>>
 
-    @Query("SELECT * FROM boxes WHERE state = (:state)")
+    @Query("SELECT * FROM boxes WHERE state = (:state) ORDER BY timestamp DESC")
     fun loadAllByState(state: Int): LiveData<List<Box>>
 
     @Insert
