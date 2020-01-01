@@ -15,8 +15,8 @@ interface BoxDao {
     fun loadAllByState(state: Int): LiveData<List<Box>>
 
     @Insert
-    fun insertAll(vararg boxes: Box)
+    suspend fun insert(boxes: Box)
 
     @Delete
-    fun delete(box: Box)
+    suspend fun delete(box: Box)
 }

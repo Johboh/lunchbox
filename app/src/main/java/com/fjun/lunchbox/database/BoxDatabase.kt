@@ -4,12 +4,20 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Box::class], version = 1)
+@Database(entities = [Box::class], version = 2)
 abstract class BoxDatabase : RoomDatabase() {
     abstract fun boxDao(): BoxDao
 
     companion object {
+
+        private val MIGRATION_TEMP = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+            }
+        }
+
         // Singleton prevents multiple instances of database opening at the
         // same time.
         @Volatile
@@ -25,7 +33,7 @@ abstract class BoxDatabase : RoomDatabase() {
                     context.applicationContext,
                     BoxDatabase::class.java,
                     "box_database"
-                ).build()
+                ).addMigrations(MIGRATION_TEMP).build()
                 INSTANCE = instance
                 return instance
             }

@@ -6,8 +6,10 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "boxes")
 data class Box(
-    @PrimaryKey val uid: Int,
     @ColumnInfo(name = "state") val state: Int,
     @ColumnInfo(name = "timestamp") val timestamp: Long,
     @ColumnInfo(name = "content") val content: String?
-)
+) {
+    @PrimaryKey(autoGenerate = true)
+    var uid: Int = 0
+}
