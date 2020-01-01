@@ -7,7 +7,9 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,9 +22,15 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val adapter = BoxesAdapter(this)
+        list.adapter = adapter
+        list.layoutManager = LinearLayoutManager(this)
+
         val mainViewModel = ViewModelProviders.of(this)[MainViewModel::class.java]
         mainViewModel.getAllBoxes().observe(this, Observer { boxes ->
-            boxes?.let { }
+            boxes?.let {
+                adapter.setBoxes(boxes)
+            }
         })
     }
 
