@@ -26,11 +26,16 @@ class BoxesAdapter internal constructor(
 
     override fun onBindViewHolder(holder: BoxViewHolder, position: Int) {
         val current = boxes[position]
-        holder.wordItemView.text = current.content
+        holder.wordItemView.text =
+            current.state.name + " " + current.content + " " + current.timestamp
     }
 
-    internal fun setBoxes(words: List<Box>) {
-        this.boxes = words
+    override fun getItemId(position: Int): Long {
+        return boxes[position].uid
+    }
+
+    internal fun setBoxes(boxes: List<Box>) {
+        this.boxes = boxes
         notifyDataSetChanged()
     }
 
