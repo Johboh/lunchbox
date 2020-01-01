@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(entities = [Box::class], version = 2)
+@TypeConverters(Converters::class)
 abstract class BoxDatabase : RoomDatabase() {
     abstract fun boxDao(): BoxDao
 
