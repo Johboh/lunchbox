@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "boxes")
 data class Box(
     @PrimaryKey val uid: Int,
     @ColumnInfo(name = "state") val state: Int,
