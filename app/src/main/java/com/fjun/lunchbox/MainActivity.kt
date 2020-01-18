@@ -7,10 +7,14 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fjun.lunchbox.database.State
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import java.lang.String.format
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,35 +22,57 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        val mainViewModel = ViewModelProviders.of(this)[MainViewModel::class.java]
+
         fab.setOnClickListener {
             val intent = Intent(this, AddActivity::class.java)
             startActivity(intent)
         }
 
-        val freezeHeaderId: Short = 0
+        val elseBoxesId: Short = 0
         val elseHeaderId: Short = 1
+        val freezeBoxesId: Short = 2
+        val freezeHeaderId: Short = 3
 
-        val adapter = SectionedAdapter()
         val freezeBoxesAdapter = BoxesAdapter(this)
         val elseBoxAdapter = BoxesAdapter(this)
+
+        val adapter = SectionedAdapter { fromPosition: Int, fromId: Short, toId: Short ->
+            if (fromId == toId) return@SectionedAdapter
+
+            val box = when (fromId) {
+                freezeBoxesId -> freezeBoxesAdapter.getBox(fromPosition)
+                elseBoxesId -> elseBoxAdapter.getBox(fromPosition)
+                else -> throw Exception(format("Uknown from ID %d", fromId));
+            }
+
+            GlobalScope.async {
+                mainViewModel.setState(
+                    box,
+                    if (toId == freezeBoxesId || toId == freezeHeaderId) State.FREEZER else State.ELSE
+                )
+            }
+        }
+
         adapter.addAdapter(freezeHeaderId, HeaderAdapter(this, "Freezer"))
-        adapter.addAdapter(10, freezeBoxesAdapter)
+        adapter.addAdapter(freezeBoxesId, freezeBoxesAdapter)
         adapter.addAdapter(elseHeaderId, HeaderAdapter(this, "Else"))
-        adapter.addAdapter(20, elseBoxAdapter)
+        adapter.addAdapter(elseBoxesId, elseBoxAdapter)
         list.adapter = adapter
         list.layoutManager = LinearLayoutManager(this)
 
-        val mainViewModel = ViewModelProviders.of(this)[MainViewModel::class.java]
+        val itemMoveCallback = ItemMoveCallback(adapter)
+        val itemTouchHelper = ItemTouchHelper(itemMoveCallback)
+        itemTouchHelper.attachToRecyclerView(list)
+
         mainViewModel.getBoxesWithState(State.FREEZER).observe(this, Observer { boxes ->
             boxes?.let {
                 freezeBoxesAdapter.setBoxes(boxes)
-                adapter.showAdapter(freezeHeaderId, boxes.isNotEmpty())
             }
         })
         mainViewModel.getBoxesWithoutState(State.FREEZER).observe(this, Observer { boxes ->
             boxes?.let {
                 elseBoxAdapter.setBoxes(boxes)
-                adapter.showAdapter(elseHeaderId, boxes.isNotEmpty())
             }
         })
     }

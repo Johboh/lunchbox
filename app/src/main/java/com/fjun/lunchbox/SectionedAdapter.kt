@@ -7,7 +7,9 @@ import java.lang.String.format
 /**
  * An adapter with adapters. Support showing and hiding adapters.
  */
-class SectionedAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SectionedAdapter(private val dropCallback: (fromPosition: Int, fromId: Short, toId: Short) -> Unit) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>(),
+    DraggableRecyclerViewAdapter {
 
     init {
         setHasStableIds(true)
@@ -15,7 +17,10 @@ class SectionedAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val adapterHolders = linkedMapOf<Short, AdapterHolder>()
 
-    fun addAdapter(id: Short, adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>) {
+    fun addAdapter(
+        id: Short,
+        adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>
+    ) {
         if (id in adapterHolders) {
             throw Exception(format("The ID %d already exist", id))
         }
@@ -66,7 +71,9 @@ class SectionedAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val holderWithOffset = holderForPosition(position)
-        holderWithOffset.holder.adapter.onBindViewHolder(holder, position - holderWithOffset.offset)
+        val adapter =
+            holderWithOffset.holder.adapter as RecyclerView.Adapter<RecyclerView.ViewHolder?>
+        adapter.onBindViewHolder(holder, position - holderWithOffset.offset)
     }
 
     private fun holderForPosition(position: Int): AdapterHolderWithOffset {
@@ -84,11 +91,35 @@ class SectionedAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     data class AdapterHolder(
-        val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>,
+        val adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>,
         val id: Short
     ) {
         var visible: Boolean = true
     }
 
     data class AdapterHolderWithOffset(val holder: AdapterHolder, val offset: Int)
+
+    override fun onRowMoved(fromPosition: Int, toPosition: Int) {
+    }
+
+    override fun onItemDropped(fromPosition: Int, toPosition: Int) {
+        val fromHolder = holderForPosition(fromPosition)
+        dropCallback(
+            fromPosition - fromHolder.offset,
+            fromHolder.holder.id,
+            holderForPosition(toPosition).holder.id
+        )
+    }
+
+    override fun onRowSelected(myViewHolder: RecyclerView.ViewHolder) {
+        if (myViewHolder is SelectableViewHolder) {
+            myViewHolder.setSelected(true)
+        }
+    }
+
+    override fun onRowClear(myViewHolder: RecyclerView.ViewHolder) {
+        if (myViewHolder is SelectableViewHolder) {
+            myViewHolder.setSelected(false)
+        }
+    }
 }

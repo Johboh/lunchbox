@@ -22,4 +22,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun getAllBoxes(): LiveData<List<Box>> {
         return boxDao.getAll()
     }
+
+    fun setState(box: Box, newState: State) {
+        boxDao.setState(box.uid, newState, System.currentTimeMillis())
+    }
 }

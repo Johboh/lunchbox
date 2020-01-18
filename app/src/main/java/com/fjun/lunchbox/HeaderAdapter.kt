@@ -28,6 +28,8 @@ class HeaderAdapter internal constructor(
         return HeaderViewHolder(inflater.inflate(R.layout.box_header, parent, false))
     }
 
+    override fun getItemId(position: Int): Long = hashCode().toLong()
+
     override fun getItemCount(): Int = 1
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
