@@ -3,4 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="box_section_title_freezer">In Freezer</string>
     <string name="box_section_title_else">Else</string>
+    <string name="id_of_box">Name/ID of box</string>
+    <string name="content_of_box">Content of box</string>
+    <string name="add_box">Add Box</string>
 </resources>

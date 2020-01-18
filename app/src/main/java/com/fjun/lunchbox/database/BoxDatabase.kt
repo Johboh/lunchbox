@@ -8,14 +8,14 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Box::class], version = 2)
+@Database(entities = [Box::class], version = 3)
 @TypeConverters(Converters::class)
 abstract class BoxDatabase : RoomDatabase() {
     abstract fun boxDao(): BoxDao
 
     companion object {
 
-        private val MIGRATION_TEMP = object : Migration(1, 2) {
+        private val MIGRATION_TEMP = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
             }
         }

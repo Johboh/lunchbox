@@ -23,7 +23,7 @@ class BoxesAdapter internal constructor(
         private val text: TextView = itemView.findViewById(R.id.text)
 
         fun bind(box: Box) {
-            text.text = box.state.name + " " + box.content + " " + box.timestamp
+            text.text = box.name + " " + box.state.name + " " + box.content + " " + box.timestamp
         }
     }
 

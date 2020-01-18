@@ -8,7 +8,6 @@ import com.fjun.lunchbox.database.State
 import kotlinx.android.synthetic.main.activity_add.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlin.random.Random
 
 class AddActivity : AppCompatActivity() {
 
@@ -19,8 +18,12 @@ class AddActivity : AppCompatActivity() {
         add_button.setOnClickListener { _ ->
             let {
                 GlobalScope.async {
-                    val state = State.values()[Random.nextInt(State.values().size)]
-                    val box = Box(state, System.currentTimeMillis(), "ddd")
+                    val box = Box(
+                        box_name_input.text.toString(),
+                        State.STORAGE,
+                        System.currentTimeMillis(),
+                        box_content_input.text.toString()
+                    )
                     BoxDatabase.getDatabase(it.application).boxDao().insert(box)
                     it.finish()
                 }

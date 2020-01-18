@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "boxes")
 data class Box(
+    @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "state") val state: State,
     @ColumnInfo(name = "timestamp") val timestamp: Long,
     @ColumnInfo(name = "content") val content: String?
