@@ -18,13 +18,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { _ ->
+        fab.setOnClickListener {
             val intent = Intent(this, AddActivity::class.java)
             startActivity(intent)
         }
 
-        val freezeHeaderId: Short = 0;
-        val elseHeaderId: Short = 1;
+        val freezeHeaderId: Short = 0
+        val elseHeaderId: Short = 1
 
         val adapter = SectionedAdapter()
         val freezeBoxesAdapter = BoxesAdapter(this)

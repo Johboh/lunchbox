@@ -17,7 +17,7 @@ class SectionedAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     fun addAdapter(id: Short, adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>) {
         if (id in adapterHolders) {
-            throw Exception(format("The ID %d already exist", id));
+            throw Exception(format("The ID %d already exist", id))
         }
         adapterHolders[id] = AdapterHolder(adapter, id)
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -29,9 +29,9 @@ class SectionedAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     fun showAdapter(id: Short, show: Boolean) {
         if (id !in adapterHolders) {
-            throw Exception(format("The ID %d does not exist", id));
+            throw Exception(format("The ID %d does not exist", id))
         }
-        adapterHolders[id]?.visible = show;
+        adapterHolders[id]?.visible = show
         notifyDataSetChanged()
     }
 
@@ -83,12 +83,12 @@ class SectionedAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         throw Exception(format("Position %d not in list", position))
     }
 
-    inner class AdapterHolder(
+    data class AdapterHolder(
         val adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>,
         val id: Short
     ) {
         var visible: Boolean = true
     }
 
-    inner class AdapterHolderWithOffset(val holder: AdapterHolder, val offset: Int) {}
+    data class AdapterHolderWithOffset(val holder: AdapterHolder, val offset: Int)
 }
