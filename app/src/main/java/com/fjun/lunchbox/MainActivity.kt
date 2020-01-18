@@ -23,19 +23,30 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val adapter = BoxesAdapter(this)
+        val freezeHeaderId: Short = 0;
+        val elseHeaderId: Short = 1;
+
+        val adapter = SectionedAdapter()
+        val freezeBoxesAdapter = BoxesAdapter(this)
+        val elseBoxAdapter = BoxesAdapter(this)
+        adapter.addAdapter(freezeHeaderId, HeaderAdapter(this, "Freezer"))
+        adapter.addAdapter(10, freezeBoxesAdapter)
+        adapter.addAdapter(elseHeaderId, HeaderAdapter(this, "Else"))
+        adapter.addAdapter(20, elseBoxAdapter)
         list.adapter = adapter
         list.layoutManager = LinearLayoutManager(this)
 
         val mainViewModel = ViewModelProviders.of(this)[MainViewModel::class.java]
         mainViewModel.getBoxesWithState(State.FREEZER).observe(this, Observer { boxes ->
             boxes?.let {
-                adapter.setFreezerBoxes(boxes)
+                freezeBoxesAdapter.setBoxes(boxes)
+                adapter.showAdapter(freezeHeaderId, boxes.isNotEmpty())
             }
         })
         mainViewModel.getBoxesWithoutState(State.FREEZER).observe(this, Observer { boxes ->
             boxes?.let {
-                adapter.setElseBoxes(boxes)
+                elseBoxAdapter.setBoxes(boxes)
+                adapter.showAdapter(elseHeaderId, boxes.isNotEmpty())
             }
         })
     }
