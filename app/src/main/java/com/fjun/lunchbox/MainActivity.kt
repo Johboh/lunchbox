@@ -2,6 +2,8 @@ package com.fjun.lunchbox
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -37,6 +39,8 @@ class MainActivity : AppCompatActivity() {
         startActivity(EditActivity.createIntent(this, it.state, it.content, it.uid))
     }
 
+    private var boxToUndo: Box? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -65,6 +69,7 @@ class MainActivity : AppCompatActivity() {
                     SectionIds.FREEZER_BOXES -> freezerBoxesAdapter.getBox(fromPosition)
                     else -> throw Exception(format("Unknown from ID %d", fromId));
                 }
+                boxToUndo = box
 
                 // And figure out where it was dropped.
                 val newState = when (toId) {
@@ -76,10 +81,18 @@ class MainActivity : AppCompatActivity() {
                 // If we are transitioning from unused to any other state, ask for food content.
                 // Else only update if change in state (keeping timestamp)
                 if (box.state == State.UNUSED && (newState == State.FREEZER || newState == State.FRIDGE)) {
-                    startActivity(EditActivity.createIntent(this, newState, box.content, box.uid))
+                    startActivityForResult(
+                        EditActivity.createIntent(
+                            this,
+                            newState,
+                            box.content,
+                            box.uid
+                        ), 0
+                    )
                 } else if (box.state != newState) {
                     GlobalScope.async {
                         mainViewModel.setState(box, newState)
+                        invalidateOptionsMenu()
                     }
                 }
             }
@@ -119,5 +132,32 @@ class MainActivity : AppCompatActivity() {
                 unusedBoxAdapter.setBoxes(boxes)
             }
         })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        invalidateOptionsMenu()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return boxToUndo != null
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_undo) {
+            val mainViewModel = ViewModelProviders.of(this)[MainViewModel::class.java]
+            // TODO figure out how to do this
+            GlobalScope.async {
+                val box = boxToUndo
+                if (box != null) {
+                    mainViewModel.undoBox(box)
+                    boxToUndo = null
+                    invalidateOptionsMenu()
+                }
+            }
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

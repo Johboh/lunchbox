@@ -21,4 +21,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setState(box: Box, newState: State) {
         boxDao.setState(box.uid, newState, System.currentTimeMillis())
     }
+
+    /**
+     * Reset all values for the given box for the value in this box.
+     */
+    fun undoBox(box: Box) {
+        boxDao.setContent(box.uid, box.state, box.content ?: "", box.timestamp)
+    }
 }
