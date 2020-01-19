@@ -8,6 +8,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.fjun.lunchbox.database.Box
+import com.fjun.lunchbox.database.State
+import java.text.SimpleDateFormat
+import java.util.*
 
 class BoxesAdapter internal constructor(
     context: Context
@@ -25,7 +28,16 @@ class BoxesAdapter internal constructor(
         private val originalBackground = itemView.background;
 
         fun bind(box: Box) {
-            text.text = box.name + " " + box.state.name + " " + box.content + " " + box.timestamp
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = box.timestamp
+            val since =
+                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                    .format(calendar.time)
+
+            text.text = when (box.state) {
+                State.FREEZER, State.FRIDGE -> text.context.getString(R.string.box_title_with_content, box.name, box.content, since)
+                else -> text.context.getString(R.string.box_title_without_content, box.name)
+            }
         }
 
         override fun setSelected(selected: Boolean) {
