@@ -36,7 +36,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val onOverflowClick: (Box) -> Unit = {
-        startActivity(EditActivity.createIntent(this, it.state, it.content, it.uid))
+        val viewModel = ViewModelProviders.of(this)[MainViewModel::class.java]
+        viewModel.setBoxToUndo(it)
+        startActivityForResult(EditActivity.createIntent(this, it.state, it.content, it.uid), 0)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
