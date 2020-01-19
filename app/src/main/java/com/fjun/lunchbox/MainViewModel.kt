@@ -13,6 +13,7 @@ import com.fjun.lunchbox.database.State
  */
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val boxDao: BoxDao = BoxDatabase.getDatabase(application).boxDao()
+    private var boxToUndo: Box? = null
 
     fun getBoxesWithState(state: State): LiveData<List<Box>> {
         return boxDao.getAllByState(state.state)
@@ -23,9 +24,21 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * Reset all values for the given box for the value in this box.
+     * Reset all values for the box to undo for the value in this box.
      */
-    fun undoBox(box: Box) {
-        boxDao.setContent(box.uid, box.state, box.content ?: "", box.timestamp)
+    fun undoBox() {
+        val box: Box? = boxToUndo
+        if (box != null) {
+            boxDao.setContent(box.uid, box.state, box.content ?: "", box.timestamp)
+        }
     }
+
+    /**
+     * Set or clear box to undo.
+     */
+    fun setBoxToUndo(box: Box?) {
+        boxToUndo = box
+    }
+
+    fun hasBoxToUndo(): Boolean = boxToUndo != null
 }

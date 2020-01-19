@@ -39,8 +39,6 @@ class MainActivity : AppCompatActivity() {
         startActivity(EditActivity.createIntent(this, it.state, it.content, it.uid))
     }
 
-    private var boxToUndo: Box? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -69,7 +67,7 @@ class MainActivity : AppCompatActivity() {
                     SectionIds.FREEZER_BOXES -> freezerBoxesAdapter.getBox(fromPosition)
                     else -> throw Exception(format("Unknown from ID %d", fromId));
                 }
-                boxToUndo = box
+                mainViewModel.setBoxToUndo(box)
 
                 // And figure out where it was dropped.
                 val newState = when (toId) {
@@ -141,7 +139,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
-        return boxToUndo != null
+        val mainViewModel = ViewModelProviders.of(this)[MainViewModel::class.java]
+        return mainViewModel.hasBoxToUndo()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -149,12 +148,8 @@ class MainActivity : AppCompatActivity() {
             val mainViewModel = ViewModelProviders.of(this)[MainViewModel::class.java]
             // TODO figure out how to do this
             GlobalScope.async {
-                val box = boxToUndo
-                if (box != null) {
-                    mainViewModel.undoBox(box)
-                    boxToUndo = null
-                    invalidateOptionsMenu()
-                }
+                mainViewModel.undoBox()
+                invalidateOptionsMenu()
             }
             return true
         }
