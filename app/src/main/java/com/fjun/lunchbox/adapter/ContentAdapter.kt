@@ -33,7 +33,7 @@ class ContentAdapter internal constructor(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        ContentViewHolder(inflater.inflate(R.layout.box_item, parent, false))
+        ContentViewHolder(inflater.inflate(R.layout.content_row, parent, false))
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val contentHolder = holder as ContentViewHolder
