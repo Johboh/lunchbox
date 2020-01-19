@@ -20,6 +20,9 @@ interface BoxDao {
     @Query("UPDATE boxes SET state = (:newState), timestamp = (:timestamp) WHERE uid = (:boxUid)")
     fun setState(boxUid: Long, newState: State, timestamp: Long)
 
+    @Query("UPDATE boxes SET state = (:newState), content = (:content), timestamp = (:timestamp) WHERE uid = (:boxUid)")
+    fun setContent(boxUid: Long, newState: State, content : String, timestamp: Long)
+
     @Insert
     suspend fun insert(boxes: Box)
 

@@ -50,20 +50,32 @@ class MainActivity : AppCompatActivity() {
                 else -> throw Exception(format("Unknown from ID %d", fromId));
             }
 
-            val state = when (toId) {
+            val newState = when (toId) {
                 fridgeBoxesId, fridgeHeaderId -> State.FRIDGE
                 freezerBoxesId, freezerHeaderId -> State.FREEZER
                 else -> State.ELSE
             }
 
-            GlobalScope.async {
-                mainViewModel.setState(box, state)
+            // If we are transitioning from else to any other state, ask for food content.
+            // Else only update if change in state (keeping timestamp)
+            if (box.state == State.ELSE && (newState == State.FREEZER || newState == State.FRIDGE)) {
+                startActivity(EditActivity.createIntent(this, newState, box.uid))
+            } else if (box.state != newState) {
+                GlobalScope.async {
+                    mainViewModel.setState(box, newState)
+                }
             }
         }
 
-        adapter.addAdapter(freezerHeaderId, HeaderAdapter(this, getString(R.string.header_title_freezer)))
+        adapter.addAdapter(
+            freezerHeaderId,
+            HeaderAdapter(this, getString(R.string.header_title_freezer))
+        )
         adapter.addAdapter(freezerBoxesId, freezerBoxesAdapter)
-        adapter.addAdapter(fridgeHeaderId, HeaderAdapter(this, getString(R.string.header_title_fridge)))
+        adapter.addAdapter(
+            fridgeHeaderId,
+            HeaderAdapter(this, getString(R.string.header_title_fridge))
+        )
         adapter.addAdapter(fridgeBoxesId, fridgeBoxAdapter)
         adapter.addAdapter(elseHeaderId, HeaderAdapter(this, getString(R.string.header_title_else)))
         adapter.addAdapter(elseBoxesId, elseBoxAdapter)
