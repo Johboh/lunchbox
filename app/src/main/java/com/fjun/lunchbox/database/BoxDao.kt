@@ -27,8 +27,11 @@ interface BoxDao {
     fun setContent(boxUid: Long, newState: State, content: String, timestamp: Long)
 
     @Insert
-    suspend fun insert(boxes: Box)
+    suspend fun insert(box: Box)
 
     @Delete
     suspend fun delete(box: Box)
+
+    @Query("DELETE FROM boxes WHERE uid = (:boxUid)")
+    fun delete(boxUid: Long)
 }

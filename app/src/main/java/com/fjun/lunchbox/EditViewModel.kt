@@ -28,4 +28,6 @@ class EditViewModel(application: Application) : AndroidViewModel(application) {
         boxDao.setContent(boxUid, newState, content, System.currentTimeMillis())
 
     fun getBox(boxUid: Long): Box = boxDao.getSingleBox(boxUid)
+
+    fun delete(boxUid: Long) = boxDao.delete(boxUid)
 }

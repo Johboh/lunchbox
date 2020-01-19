@@ -3,6 +3,8 @@ package com.fjun.lunchbox
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -86,6 +88,24 @@ class EditActivity : AppCompatActivity() {
             }
             it.finish()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_edit, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_delete) {
+            val viewModel = ViewModelProviders.of(this)[EditViewModel::class.java]
+            // TODO figure out how to do this
+            GlobalScope.async {
+                viewModel.delete(boxUid)
+                finish()
+            }
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {

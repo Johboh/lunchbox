@@ -16,4 +16,7 @@
     </plurals>
     <string name="box_title_without_content">%s: Empty</string>
     <string name="recent_content">Recent content</string>
+    <string name="label_add_new">Add new Lunchbox</string>
+    <string name="label_edit">Edit Lunchbox</string>
+    <string name="action_delete">Delete</string>
 </resources>
