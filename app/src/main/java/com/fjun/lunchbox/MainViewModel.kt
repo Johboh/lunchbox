@@ -26,10 +26,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * Reset all values for the box to undo for the value in this box.
      */
-    fun undoBox() {
+    suspend fun undoBox() {
         val box: Box? = boxToUndo
         if (box != null) {
-            boxDao.setContent(box.uid, box.state, box.content ?: "", box.timestamp)
+            // If box was deleted, insert. Else update/reset previous one
+            if (boxDao.getSingleBox(box.uid) == null) {
+                boxDao.insert(box)
+            } else {
+                boxDao.setContent(box.uid, box.state, box.content ?: "", box.timestamp)
+            }
         }
     }
 

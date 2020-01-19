@@ -82,12 +82,14 @@ class EditActivity : AppCompatActivity() {
             // If new state is same as current state, just update content without a new state
             // and thus keep current timestamp.
             val box = viewModel.getBox(boxUid)
-            if (box.state == newState) {
-                viewModel.setContent(boxUid, content)
-            } else {
-                viewModel.setContent(boxUid, newState, content)
+            if (box != null) {
+                if (box.state == newState) {
+                    viewModel.setContent(boxUid, content)
+                } else {
+                    viewModel.setContent(boxUid, newState, content)
+                }
+                setResult(Activity.RESULT_OK)
             }
-            setResult(Activity.RESULT_OK)
             finish()
         }
     }
