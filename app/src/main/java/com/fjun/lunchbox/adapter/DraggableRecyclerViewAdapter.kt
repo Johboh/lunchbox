@@ -1,4 +1,4 @@
-package com.fjun.lunchbox
+package com.fjun.lunchbox.adapter
 
 import androidx.recyclerview.widget.RecyclerView
 

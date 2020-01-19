@@ -1,4 +1,4 @@
-package com.fjun.lunchbox
+package com.fjun.lunchbox.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -24,7 +24,8 @@ class SectionedAdapter(private val dropCallback: (fromPosition: Int, fromId: Sho
         if (id in adapterHolders) {
             throw Exception(format("The ID %d already exist", id))
         }
-        adapterHolders[id] = AdapterHolder(adapter, id)
+        adapterHolders[id] =
+            AdapterHolder(adapter, id)
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onChanged() {
                 notifyDataSetChanged()
@@ -84,7 +85,10 @@ class SectionedAdapter(private val dropCallback: (fromPosition: Int, fromId: Sho
             }
             count += holder.adapter.itemCount
             if (position < count) {
-                return AdapterHolderWithOffset(holder, count - holder.adapter.itemCount)
+                return AdapterHolderWithOffset(
+                    holder,
+                    count - holder.adapter.itemCount
+                )
             }
         }
         throw Exception(format("Position %d not in list", position))

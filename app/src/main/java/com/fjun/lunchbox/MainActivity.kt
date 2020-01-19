@@ -9,6 +9,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.fjun.lunchbox.adapter.BoxesAdapter
+import com.fjun.lunchbox.adapter.HeaderAdapter
+import com.fjun.lunchbox.adapter.ItemMoveCallback
+import com.fjun.lunchbox.adapter.SectionedAdapter
 import com.fjun.lunchbox.database.State
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -40,49 +44,63 @@ class MainActivity : AppCompatActivity() {
         val fridgeBoxAdapter = BoxesAdapter(this)
         val freezerBoxesAdapter = BoxesAdapter(this)
 
-        val adapter = SectionedAdapter { fromPosition: Int, fromId: Short, toId: Short ->
-            if (fromId == toId) return@SectionedAdapter
+        val adapter =
+            SectionedAdapter { fromPosition: Int, fromId: Short, toId: Short ->
+                if (fromId == toId) return@SectionedAdapter
 
-            val box = when (fromId) {
-                elseBoxesId -> elseBoxAdapter.getBox(fromPosition)
-                fridgeBoxesId -> fridgeBoxAdapter.getBox(fromPosition)
-                freezerBoxesId -> freezerBoxesAdapter.getBox(fromPosition)
-                else -> throw Exception(format("Unknown from ID %d", fromId));
-            }
+                val box = when (fromId) {
+                    elseBoxesId -> elseBoxAdapter.getBox(fromPosition)
+                    fridgeBoxesId -> fridgeBoxAdapter.getBox(fromPosition)
+                    freezerBoxesId -> freezerBoxesAdapter.getBox(fromPosition)
+                    else -> throw Exception(format("Unknown from ID %d", fromId));
+                }
 
-            val newState = when (toId) {
-                fridgeBoxesId, fridgeHeaderId -> State.FRIDGE
-                freezerBoxesId, freezerHeaderId -> State.FREEZER
-                else -> State.ELSE
-            }
+                val newState = when (toId) {
+                    fridgeBoxesId, fridgeHeaderId -> State.FRIDGE
+                    freezerBoxesId, freezerHeaderId -> State.FREEZER
+                    else -> State.ELSE
+                }
 
-            // If we are transitioning from else to any other state, ask for food content.
-            // Else only update if change in state (keeping timestamp)
-            if (box.state == State.ELSE && (newState == State.FREEZER || newState == State.FRIDGE)) {
-                startActivity(EditActivity.createIntent(this, newState, box.uid))
-            } else if (box.state != newState) {
-                GlobalScope.async {
-                    mainViewModel.setState(box, newState)
+                // If we are transitioning from else to any other state, ask for food content.
+                // Else only update if change in state (keeping timestamp)
+                if (box.state == State.ELSE && (newState == State.FREEZER || newState == State.FRIDGE)) {
+                    startActivity(EditActivity.createIntent(this, newState, box.uid))
+                } else if (box.state != newState) {
+                    GlobalScope.async {
+                        mainViewModel.setState(box, newState)
+                    }
                 }
             }
-        }
 
         adapter.addAdapter(
             freezerHeaderId,
-            HeaderAdapter(this, getString(R.string.header_title_freezer))
+            HeaderAdapter(
+                this,
+                getString(R.string.header_title_freezer)
+            )
         )
         adapter.addAdapter(freezerBoxesId, freezerBoxesAdapter)
         adapter.addAdapter(
             fridgeHeaderId,
-            HeaderAdapter(this, getString(R.string.header_title_fridge))
+            HeaderAdapter(
+                this,
+                getString(R.string.header_title_fridge)
+            )
         )
         adapter.addAdapter(fridgeBoxesId, fridgeBoxAdapter)
-        adapter.addAdapter(elseHeaderId, HeaderAdapter(this, getString(R.string.header_title_else)))
+        adapter.addAdapter(
+            elseHeaderId,
+            HeaderAdapter(
+                this,
+                getString(R.string.header_title_else)
+            )
+        )
         adapter.addAdapter(elseBoxesId, elseBoxAdapter)
         list.adapter = adapter
         list.layoutManager = LinearLayoutManager(this)
 
-        val itemMoveCallback = ItemMoveCallback(adapter)
+        val itemMoveCallback =
+            ItemMoveCallback(adapter)
         val itemTouchHelper = ItemTouchHelper(itemMoveCallback)
         itemTouchHelper.attachToRecyclerView(list)
 

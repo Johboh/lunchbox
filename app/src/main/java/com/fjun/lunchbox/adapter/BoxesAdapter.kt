@@ -1,4 +1,4 @@
-package com.fjun.lunchbox
+package com.fjun.lunchbox.adapter
 
 import android.content.Context
 import android.graphics.Color
@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.fjun.lunchbox.R
 import com.fjun.lunchbox.database.Box
 import com.fjun.lunchbox.database.State
 import java.text.SimpleDateFormat
@@ -35,7 +36,12 @@ class BoxesAdapter internal constructor(
                     .format(calendar.time)
 
             text.text = when (box.state) {
-                State.FREEZER, State.FRIDGE -> text.context.getString(R.string.box_title_with_content, box.name, box.content, since)
+                State.FREEZER, State.FRIDGE -> text.context.getString(
+                    R.string.box_title_with_content,
+                    box.name,
+                    box.content,
+                    since
+                )
                 else -> text.context.getString(R.string.box_title_without_content, box.name)
             }
         }
