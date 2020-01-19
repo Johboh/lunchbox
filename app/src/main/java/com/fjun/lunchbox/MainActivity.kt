@@ -31,32 +31,41 @@ class MainActivity : AppCompatActivity() {
 
         val elseBoxesId: Short = 0
         val elseHeaderId: Short = 1
-        val freezeBoxesId: Short = 2
-        val freezeHeaderId: Short = 3
+        val fridgeBoxesId: Short = 2
+        val fridgeHeaderId: Short = 3
+        val freezerBoxesId: Short = 4
+        val freezerHeaderId: Short = 5
 
-        val freezeBoxesAdapter = BoxesAdapter(this)
         val elseBoxAdapter = BoxesAdapter(this)
+        val fridgeBoxAdapter = BoxesAdapter(this)
+        val freezerBoxesAdapter = BoxesAdapter(this)
 
         val adapter = SectionedAdapter { fromPosition: Int, fromId: Short, toId: Short ->
             if (fromId == toId) return@SectionedAdapter
 
             val box = when (fromId) {
-                freezeBoxesId -> freezeBoxesAdapter.getBox(fromPosition)
                 elseBoxesId -> elseBoxAdapter.getBox(fromPosition)
-                else -> throw Exception(format("Uknown from ID %d", fromId));
+                fridgeBoxesId -> fridgeBoxAdapter.getBox(fromPosition)
+                freezerBoxesId -> freezerBoxesAdapter.getBox(fromPosition)
+                else -> throw Exception(format("Unknown from ID %d", fromId));
+            }
+
+            val state = when (toId) {
+                fridgeBoxesId, fridgeHeaderId -> State.FRIDGE
+                freezerBoxesId, freezerHeaderId -> State.FREEZER
+                else -> State.ELSE
             }
 
             GlobalScope.async {
-                mainViewModel.setState(
-                    box,
-                    if (toId == freezeBoxesId || toId == freezeHeaderId) State.FREEZER else State.ELSE
-                )
+                mainViewModel.setState(box, state)
             }
         }
 
-        adapter.addAdapter(freezeHeaderId, HeaderAdapter(this, "Freezer"))
-        adapter.addAdapter(freezeBoxesId, freezeBoxesAdapter)
-        adapter.addAdapter(elseHeaderId, HeaderAdapter(this, "Else"))
+        adapter.addAdapter(freezerHeaderId, HeaderAdapter(this, getString(R.string.header_title_freezer)))
+        adapter.addAdapter(freezerBoxesId, freezerBoxesAdapter)
+        adapter.addAdapter(fridgeHeaderId, HeaderAdapter(this, getString(R.string.header_title_fridge)))
+        adapter.addAdapter(fridgeBoxesId, fridgeBoxAdapter)
+        adapter.addAdapter(elseHeaderId, HeaderAdapter(this, getString(R.string.header_title_else)))
         adapter.addAdapter(elseBoxesId, elseBoxAdapter)
         list.adapter = adapter
         list.layoutManager = LinearLayoutManager(this)
@@ -67,10 +76,15 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.getBoxesWithState(State.FREEZER).observe(this, Observer { boxes ->
             boxes?.let {
-                freezeBoxesAdapter.setBoxes(boxes)
+                freezerBoxesAdapter.setBoxes(boxes)
             }
         })
-        mainViewModel.getBoxesWithoutState(State.FREEZER).observe(this, Observer { boxes ->
+        mainViewModel.getBoxesWithState(State.FRIDGE).observe(this, Observer { boxes ->
+            boxes?.let {
+                fridgeBoxAdapter.setBoxes(boxes)
+            }
+        })
+        mainViewModel.getBoxesWithState(State.ELSE).observe(this, Observer { boxes ->
             boxes?.let {
                 elseBoxAdapter.setBoxes(boxes)
             }
