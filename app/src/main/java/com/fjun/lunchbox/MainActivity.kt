@@ -18,7 +18,20 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import java.lang.String.format
 
+/**
+ * Starting Activity.
+ */
 class MainActivity : AppCompatActivity() {
+
+    private object SectionIds {
+        const val UNUSED_BOXES: Short = 0
+        const val UNUSED_HEADER: Short = 1
+        const val FRIDGE_BOXES: Short = 2
+        const val FRIDGE_HEADER: Short = 3
+        const val FREEZER_BOXES: Short = 4
+        const val FREEZER_HEADER: Short = 5
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -31,37 +44,33 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val elseBoxesId: Short = 0
-        val elseHeaderId: Short = 1
-        val fridgeBoxesId: Short = 2
-        val fridgeHeaderId: Short = 3
-        val freezerBoxesId: Short = 4
-        val freezerHeaderId: Short = 5
-
-        val elseBoxAdapter = BoxesAdapter(this)
+        val unusedBoxAdapter = BoxesAdapter(this)
         val fridgeBoxAdapter = BoxesAdapter(this)
         val freezerBoxesAdapter = BoxesAdapter(this)
 
+        // Sectioned Adapter with callback for when dropping boxes in other sections.
         val adapter =
             SectionedAdapter { fromPosition: Int, fromId: Short, toId: Short ->
                 if (fromId == toId) return@SectionedAdapter
 
+                // Get the box that was dropped
                 val box = when (fromId) {
-                    elseBoxesId -> elseBoxAdapter.getBox(fromPosition)
-                    fridgeBoxesId -> fridgeBoxAdapter.getBox(fromPosition)
-                    freezerBoxesId -> freezerBoxesAdapter.getBox(fromPosition)
+                    SectionIds.UNUSED_BOXES -> unusedBoxAdapter.getBox(fromPosition)
+                    SectionIds.FRIDGE_BOXES -> fridgeBoxAdapter.getBox(fromPosition)
+                    SectionIds.FREEZER_BOXES -> freezerBoxesAdapter.getBox(fromPosition)
                     else -> throw Exception(format("Unknown from ID %d", fromId));
                 }
 
+                // And figure out where it was dropped.
                 val newState = when (toId) {
-                    fridgeBoxesId, fridgeHeaderId -> State.FRIDGE
-                    freezerBoxesId, freezerHeaderId -> State.FREEZER
-                    else -> State.ELSE
+                    SectionIds.FRIDGE_BOXES, SectionIds.FRIDGE_HEADER -> State.FRIDGE
+                    SectionIds.FREEZER_BOXES, SectionIds.FREEZER_HEADER -> State.FREEZER
+                    else -> State.UNUSED
                 }
 
-                // If we are transitioning from else to any other state, ask for food content.
+                // If we are transitioning from unused to any other state, ask for food content.
                 // Else only update if change in state (keeping timestamp)
-                if (box.state == State.ELSE && (newState == State.FREEZER || newState == State.FRIDGE)) {
+                if (box.state == State.UNUSED && (newState == State.FREEZER || newState == State.FRIDGE)) {
                     startActivity(EditActivity.createIntent(this, newState, box.content, box.uid))
                 } else if (box.state != newState) {
                     GlobalScope.async {
@@ -71,37 +80,25 @@ class MainActivity : AppCompatActivity() {
             }
 
         adapter.addAdapter(
-            freezerHeaderId,
-            HeaderAdapter(
-                this,
-                getString(R.string.header_title_freezer)
-            )
+            SectionIds.FREEZER_HEADER, HeaderAdapter(this, getString(R.string.header_title_freezer))
         )
-        adapter.addAdapter(freezerBoxesId, freezerBoxesAdapter)
+        adapter.addAdapter(SectionIds.FREEZER_BOXES, freezerBoxesAdapter)
         adapter.addAdapter(
-            fridgeHeaderId,
-            HeaderAdapter(
-                this,
-                getString(R.string.header_title_fridge)
-            )
+            SectionIds.FRIDGE_HEADER, HeaderAdapter(this, getString(R.string.header_title_fridge))
         )
-        adapter.addAdapter(fridgeBoxesId, fridgeBoxAdapter)
+        adapter.addAdapter(SectionIds.FRIDGE_BOXES, fridgeBoxAdapter)
         adapter.addAdapter(
-            elseHeaderId,
-            HeaderAdapter(
-                this,
-                getString(R.string.header_title_else)
-            )
+            SectionIds.UNUSED_HEADER, HeaderAdapter(this, getString(R.string.header_title_unused))
         )
-        adapter.addAdapter(elseBoxesId, elseBoxAdapter)
+        adapter.addAdapter(SectionIds.UNUSED_BOXES, unusedBoxAdapter)
         list.adapter = adapter
         list.layoutManager = LinearLayoutManager(this)
 
-        val itemMoveCallback =
-            ItemMoveCallback(adapter)
+        val itemMoveCallback = ItemMoveCallback(adapter)
         val itemTouchHelper = ItemTouchHelper(itemMoveCallback)
         itemTouchHelper.attachToRecyclerView(list)
 
+        // Listen for changed to any box list.
         mainViewModel.getBoxesWithState(State.FREEZER).observe(this, Observer { boxes ->
             boxes?.let {
                 freezerBoxesAdapter.setBoxes(boxes)
@@ -112,9 +109,9 @@ class MainActivity : AppCompatActivity() {
                 fridgeBoxAdapter.setBoxes(boxes)
             }
         })
-        mainViewModel.getBoxesWithState(State.ELSE).observe(this, Observer { boxes ->
+        mainViewModel.getBoxesWithState(State.UNUSED).observe(this, Observer { boxes ->
             boxes?.let {
-                elseBoxAdapter.setBoxes(boxes)
+                unusedBoxAdapter.setBoxes(boxes)
             }
         })
     }

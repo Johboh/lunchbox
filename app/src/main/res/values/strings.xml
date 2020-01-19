@@ -7,7 +7,7 @@
     <string name="content_of_box">Content of box</string>
     <string name="add_box">Add Box</string>
     <string name="header_title_freezer">Freezer</string>
-    <string name="header_title_else">Else</string>
+    <string name="header_title_unused">Unused</string>
     <string name="header_title_fridge">Fridge</string>
     <string name="update_button">Update</string>
     <plurals name="box_title_with_content">

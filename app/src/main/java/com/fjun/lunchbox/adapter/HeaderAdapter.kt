@@ -1,5 +1,6 @@
 package com.fjun.lunchbox.adapter
 
+
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fjun.lunchbox.R
 
 /**
- * Adapter for a single header.
+ * Adapter for a single text header.
  */
 class HeaderAdapter internal constructor(
     context: Context, private val title: String
@@ -29,7 +30,7 @@ class HeaderAdapter internal constructor(
         return HeaderViewHolder(inflater.inflate(R.layout.box_header, parent, false))
     }
 
-    override fun getItemId(position: Int): Long = hashCode().toLong()
+    override fun getItemId(position: Int): Long = (title.hashCode() + hashCode()).toLong()
 
     override fun getItemCount(): Int = 1
 

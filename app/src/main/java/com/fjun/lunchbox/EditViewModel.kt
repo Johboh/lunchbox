@@ -7,6 +7,9 @@ import com.fjun.lunchbox.database.BoxDao
 import com.fjun.lunchbox.database.BoxDatabase
 import com.fjun.lunchbox.database.State
 
+/**
+ * View model for the Edit Activity.
+ */
 class EditViewModel(application: Application) : AndroidViewModel(application) {
     private val boxDao: BoxDao = BoxDatabase.getDatabase(application).boxDao()
 

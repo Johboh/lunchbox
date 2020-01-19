@@ -10,9 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fjun.lunchbox.R
 import com.fjun.lunchbox.database.Box
 import com.fjun.lunchbox.database.State
-import java.text.SimpleDateFormat
-import java.util.*
 
+/**
+ * Adapter for lunch boxes.
+ */
 class BoxesAdapter internal constructor(
     context: Context
 ) : RecyclerView.Adapter<SelectableViewHolder>() {

@@ -3,6 +3,9 @@ package com.fjun.lunchbox.adapter
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
+/**
+ * Callback for ItemTouchHelper to support drag and drop in a RecyclerView
+ */
 class ItemMoveCallback(private val adapter: DraggableRecyclerViewAdapter) :
     ItemTouchHelper.Callback() {
 
@@ -12,6 +15,7 @@ class ItemMoveCallback(private val adapter: DraggableRecyclerViewAdapter) :
     override fun isLongPressDragEnabled() = true
     override fun isItemViewSwipeEnabled() = false
 
+    // Only support dragging of SelectableViewHolders
     override fun getMovementFlags(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
@@ -31,6 +35,8 @@ class ItemMoveCallback(private val adapter: DraggableRecyclerViewAdapter) :
     }
 
     override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+        // Calculate from where and to where an item where dragged and dropped.
+        // onItemDropped will be called once an item is dropped.
         when (actionState) {
             ItemTouchHelper.ACTION_STATE_DRAG -> {
                 viewHolder?.also { dragFromPosition = it.adapterPosition }

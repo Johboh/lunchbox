@@ -9,6 +9,9 @@ import kotlinx.android.synthetic.main.activity_add.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 
+/**
+ * Add a new lunch box.
+ */
 class AddActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,6 +19,7 @@ class AddActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add)
 
         add_button.setOnClickListener { _ ->
+            // TODO figure out how to do this properly
             let {
                 GlobalScope.async {
                     val box = Box(

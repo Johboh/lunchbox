@@ -13,30 +13,47 @@ import kotlinx.android.synthetic.main.activity_edit.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 
+/**
+ * Edit the content of an existing lunch box.
+ */
 class EditActivity : AppCompatActivity() {
 
-    var boxUid: Long = 0
-    var content : String = ""
-    var newState: State = State.ELSE
+    private object Extras {
+        const val STATE = "STATE"
+        const val BOX_UID = "BOX_UID"
+        const val CONTENT = "CONTENT"
+    }
+
+    private object Limits {
+        const val CONTENT_LIMIT = 5
+    }
+
+    private var boxUid: Long = 0
+    private var content: String = ""
+    private var newState: State = State.UNUSED
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
 
-        content = intent.getStringExtra("CONTENT") ?: ""
-        boxUid = savedInstanceState?.getLong("BOX_UID") ?: intent.getLongExtra("BOX_UID", 0)
-        newState = (savedInstanceState?.getSerializable("STATE")
-            ?: intent.getSerializableExtra("STATE")) as State
+        // Restore
+        content = intent.getStringExtra(Extras.CONTENT) ?: ""
+        boxUid =
+            savedInstanceState?.getLong(Extras.BOX_UID) ?: intent.getLongExtra(Extras.BOX_UID, 0)
+        newState = (savedInstanceState?.getSerializable(Extras.STATE)
+            ?: intent.getSerializableExtra(Extras.STATE)) as State
 
-        val viewModel = ViewModelProviders.of(this)[EditViewModel::class.java]
 
         box_content_input.setText(content)
 
+        // Setup list and adapters
+        val viewModel = ViewModelProviders.of(this)[EditViewModel::class.java]
         val adapter = ContentAdapter(this) { content -> saveAndClose(viewModel, content) }
         list.adapter = adapter
         list.layoutManager = LinearLayoutManager(this)
 
-        viewModel.getRecentContent(5).observe(this, Observer { contents ->
+        // List recent lunch box content
+        viewModel.getRecentContent(Limits.CONTENT_LIMIT).observe(this, Observer { contents ->
             contents?.let {
                 adapter.setContents(contents)
             }
@@ -52,10 +69,12 @@ class EditActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putLong("BOX_UID", boxUid)
+        outState.putLong(Extras.BOX_UID, boxUid)
+        outState.putSerializable(Extras.STATE, newState)
     }
 
     private fun saveAndClose(viewModel: EditViewModel, content: String) = let {
+        // TODO figure out how to do this properly
         GlobalScope.async {
             viewModel.setContent(boxUid, newState, content)
             it.finish()
@@ -63,11 +82,16 @@ class EditActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun createIntent(context: Context, newState: State, content : String?, boxUid: Long): Intent {
+        fun createIntent(
+            context: Context,
+            newState: State,
+            content: String?,
+            boxUid: Long
+        ): Intent {
             val intent = Intent(context, EditActivity::class.java)
-            intent.putExtra("BOX_UID", boxUid)
-            intent.putExtra("STATE", newState)
-            intent.putExtra("CONTENT", content)
+            intent.putExtra(Extras.STATE, newState)
+            intent.putExtra(Extras.BOX_UID, boxUid)
+            intent.putExtra(Extras.CONTENT, content)
             return intent
         }
     }

@@ -8,9 +8,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.fjun.lunchbox.R
 
+/**
+ * Adapter for Content in a lunch box. Support clicking on the rows via the onClick callback. Content need to be unique.
+ */
 class ContentAdapter internal constructor(
     context: Context,
-    private val onClick : (String) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val onClick: (String) -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     init {
         setHasStableIds(true)

@@ -4,6 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+/**
+ * A Lunch box.
+ */
 @Entity(tableName = "boxes")
 data class Box(
     @ColumnInfo(name = "name") val name: String,

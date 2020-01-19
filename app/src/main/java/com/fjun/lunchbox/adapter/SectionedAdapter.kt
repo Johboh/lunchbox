@@ -1,6 +1,5 @@
 package com.fjun.lunchbox.adapter
 
-import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import java.lang.String.format
@@ -18,6 +17,9 @@ class SectionedAdapter(private val dropCallback: (fromPosition: Int, fromId: Sho
 
     private val adapterHolders = linkedMapOf<Short, AdapterHolder>()
 
+    /**
+     * Add an adapter to this adapter. The ID should be unique among all added adapters.
+     */
     fun addAdapter(
         id: Short,
         adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>
@@ -34,6 +36,9 @@ class SectionedAdapter(private val dropCallback: (fromPosition: Int, fromId: Sho
         })
     }
 
+    /**
+     * Show or hide an adapter based in the ID used when adding an adapter.
+     */
     fun showAdapter(id: Short, show: Boolean) {
         if (id !in adapterHolders) {
             throw Exception(format("The ID %d does not exist", id))
@@ -43,6 +48,8 @@ class SectionedAdapter(private val dropCallback: (fromPosition: Int, fromId: Sho
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        // viewType is a composition of the original view type and the ID to identify the original
+        // adapter.
         val originalViewType = viewType shr 16
         val id: Short = (viewType and 0xFFFF).toShort()
         val holder = adapterHolders[id] ?: throw Exception(format("The ID %d does not exist", id))
@@ -50,6 +57,10 @@ class SectionedAdapter(private val dropCallback: (fromPosition: Int, fromId: Sho
     }
 
     override fun getItemViewType(position: Int): Int {
+        // Compose view type into unique view types for each child adapter, even if several adapters
+        // return the same value for the view type.
+        // Lower 16 bits is the ID for the adapter (which is unique)
+        // Upper 16+ bits is the original view type given by the child adapter.
         val holderWithOffset = holderForPosition(position)
         val holder = holderWithOffset.holder
         val viewType = holder.adapter.getItemViewType(position - holderWithOffset.offset)
@@ -60,9 +71,7 @@ class SectionedAdapter(private val dropCallback: (fromPosition: Int, fromId: Sho
     override fun getItemId(position: Int): Long {
         val holderWithOffset = holderForPosition(position)
         val holder = holderWithOffset.holder
-        val x = holder.adapter.getItemId(position - holderWithOffset.offset)
-        Log.d("Lunchbox", format("Position: %d, id: %d", position, x))
-        return x
+        return holder.adapter.getItemId(position - holderWithOffset.offset)
     }
 
     override fun getItemCount(): Int {
@@ -80,6 +89,10 @@ class SectionedAdapter(private val dropCallback: (fromPosition: Int, fromId: Sho
         adapter.onBindViewHolder(holder, position - holderWithOffset.offset)
     }
 
+    /**
+     * Given a global position in this adapter, find the AdapterHolder containing the child adapter
+     * and a correctional offset position for this position.
+     */
     private fun holderForPosition(position: Int): AdapterHolderWithOffset {
         var count = 0
         for (holder in adapterHolders.values) {
