@@ -1,5 +1,6 @@
 package com.fjun.lunchbox
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -86,7 +87,8 @@ class EditActivity : AppCompatActivity() {
             } else {
                 viewModel.setContent(boxUid, newState, content)
             }
-            it.finish()
+            setResult(Activity.RESULT_OK)
+            finish()
         }
     }
 
@@ -101,6 +103,7 @@ class EditActivity : AppCompatActivity() {
             // TODO figure out how to do this
             GlobalScope.async {
                 viewModel.delete(boxUid)
+                setResult(Activity.RESULT_OK)
                 finish()
             }
             return true
