@@ -150,6 +150,7 @@ class MainActivity : AppCompatActivity() {
             GlobalScope.async {
                 mainViewModel.undoBox()
                 invalidateOptionsMenu()
+                mainViewModel.setBoxToUndo(null)
             }
             return true
         }
