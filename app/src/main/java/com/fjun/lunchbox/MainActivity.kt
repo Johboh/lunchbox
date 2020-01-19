@@ -11,6 +11,7 @@ import com.fjun.lunchbox.adapter.BoxesAdapter
 import com.fjun.lunchbox.adapter.HeaderAdapter
 import com.fjun.lunchbox.adapter.ItemMoveCallback
 import com.fjun.lunchbox.adapter.SectionedAdapter
+import com.fjun.lunchbox.database.Box
 import com.fjun.lunchbox.database.State
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -32,6 +33,10 @@ class MainActivity : AppCompatActivity() {
         const val FREEZER_HEADER: Short = 5
     }
 
+    private val onOverflowClick: (Box) -> Unit = {
+        startActivity(EditActivity.createIntent(this, it.state, it.content, it.uid))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -44,9 +49,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val unusedBoxAdapter = BoxesAdapter(this)
-        val fridgeBoxAdapter = BoxesAdapter(this)
-        val freezerBoxesAdapter = BoxesAdapter(this)
+        val unusedBoxAdapter = BoxesAdapter(this, onOverflowClick)
+        val fridgeBoxAdapter = BoxesAdapter(this, onOverflowClick)
+        val freezerBoxesAdapter = BoxesAdapter(this, onOverflowClick)
 
         // Sectioned Adapter with callback for when dropping boxes in other sections.
         val adapter =

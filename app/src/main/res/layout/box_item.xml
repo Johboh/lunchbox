@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="12dp">
@@ -10,6 +10,18 @@
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="One item"/>
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/context_menu"
+        android:layout_toLeftOf="@+id/context_menu"
+        tools:text="One item" />
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/context_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:padding="10dp"
+        app:srcCompat="@drawable/ic_more_vert_grey_16dp" />
+
+</RelativeLayout>

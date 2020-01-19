@@ -76,7 +76,14 @@ class EditActivity : AppCompatActivity() {
     private fun saveAndClose(viewModel: EditViewModel, content: String) = let {
         // TODO figure out how to do this properly
         GlobalScope.async {
-            viewModel.setContent(boxUid, newState, content)
+            // If new state is same as current state, just update content without a new state
+            // and thus keep current timestamp.
+            val box = viewModel.getBox(boxUid)
+            if (box.state == newState) {
+                viewModel.setContent(boxUid, content)
+            } else {
+                viewModel.setContent(boxUid, newState, content)
+            }
             it.finish()
         }
     }

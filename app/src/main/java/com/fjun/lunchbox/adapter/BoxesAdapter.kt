@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.fjun.lunchbox.R
@@ -15,7 +16,8 @@ import com.fjun.lunchbox.database.State
  * Adapter for lunch boxes.
  */
 class BoxesAdapter internal constructor(
-    context: Context
+    context: Context,
+    private val onOverflowClick: (Box) -> Unit
 ) : RecyclerView.Adapter<SelectableViewHolder>() {
 
     init {
@@ -27,6 +29,7 @@ class BoxesAdapter internal constructor(
 
     inner class BoxViewHolder(itemView: View) : SelectableViewHolder(itemView) {
         private val text: TextView = itemView.findViewById(R.id.text)
+        private val overflow: ImageView = itemView.findViewById(R.id.context_menu)
         private val originalBackground = itemView.background;
 
         fun bind(box: Box) {
@@ -42,6 +45,7 @@ class BoxesAdapter internal constructor(
                 )
                 else -> text.context.getString(R.string.box_title_without_content, box.name)
             }
+            overflow.setOnClickListener { _ -> onOverflowClick(box) }
         }
 
         override fun setSelected(selected: Boolean) {
