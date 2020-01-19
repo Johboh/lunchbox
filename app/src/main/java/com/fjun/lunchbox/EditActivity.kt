@@ -4,7 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.fjun.lunchbox.database.BoxDatabase
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.fjun.lunchbox.adapter.ContentAdapter
 import com.fjun.lunchbox.database.State
 import kotlinx.android.synthetic.main.activity_edit.*
 import kotlinx.coroutines.GlobalScope
@@ -23,24 +26,36 @@ class EditActivity : AppCompatActivity() {
         newState = (savedInstanceState?.getSerializable("STATE")
             ?: intent.getSerializableExtra("STATE")) as State
 
-        save_button.setOnClickListener { _ ->
-            let {
-                GlobalScope.async {
-                    BoxDatabase.getDatabase(it.application).boxDao().setContent(
-                        boxUid,
-                        newState,
-                        box_content_input.text.toString(),
-                        System.currentTimeMillis()
-                    )
-                    it.finish()
-                }
+        val viewModel = ViewModelProviders.of(this)[EditViewModel::class.java]
+
+        val adapter = ContentAdapter(this) { content -> saveAndClose(viewModel, content) }
+        list.adapter = adapter
+        list.layoutManager = LinearLayoutManager(this)
+
+        viewModel.getRecentContent(5).observe(this, Observer { contents ->
+            contents?.let {
+                adapter.setContents(contents)
             }
+        })
+
+        save_button.setOnClickListener { _ ->
+            saveAndClose(
+                viewModel,
+                box_content_input.text.toString()
+            )
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putLong("BOX_UID", boxUid)
+    }
+
+    private fun saveAndClose(viewModel: EditViewModel, content: String) = let {
+        GlobalScope.async {
+            viewModel.setContent(boxUid, newState, content)
+            it.finish()
+        }
     }
 
     companion object {

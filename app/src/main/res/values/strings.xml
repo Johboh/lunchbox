@@ -12,4 +12,5 @@
     <string name="update_button">Update</string>
     <string name="box_title_with_content">%s: With %s since %s</string>
     <string name="box_title_without_content">%s: Empty</string>
+    <string name="recent_content">Recent content</string>
 </resources>
