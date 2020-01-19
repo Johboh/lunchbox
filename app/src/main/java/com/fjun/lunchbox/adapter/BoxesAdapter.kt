@@ -29,18 +29,15 @@ class BoxesAdapter internal constructor(
         private val originalBackground = itemView.background;
 
         fun bind(box: Box) {
-            val calendar = Calendar.getInstance()
-            calendar.timeInMillis = box.timestamp
-            val since =
-                SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                    .format(calendar.time)
+            val days = ((System.currentTimeMillis() - box.timestamp) / 86400000).toInt()
 
             text.text = when (box.state) {
-                State.FREEZER, State.FRIDGE -> text.context.getString(
-                    R.string.box_title_with_content,
+                State.FREEZER, State.FRIDGE -> text.context.resources.getQuantityString(
+                    R.plurals.box_title_with_content,
+                    days,
                     box.name,
                     box.content,
-                    since
+                    days
                 )
                 else -> text.context.getString(R.string.box_title_without_content, box.name)
             }

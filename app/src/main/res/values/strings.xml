@@ -10,7 +10,10 @@
     <string name="header_title_else">Else</string>
     <string name="header_title_fridge">Fridge</string>
     <string name="update_button">Update</string>
-    <string name="box_title_with_content">%s: With %s since %s</string>
+    <plurals name="box_title_with_content">
+        <item quantity="one">%s: With %s since %d day ago</item>
+        <item quantity="other">%s: With %s since %d days ago</item>
+    </plurals>
     <string name="box_title_without_content">%s: Empty</string>
     <string name="recent_content">Recent content</string>
 </resources>
