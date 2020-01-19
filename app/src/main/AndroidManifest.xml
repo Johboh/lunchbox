@@ -24,7 +24,8 @@
             android:label="@string/label_add_new" />
         <activity
             android:name=".EditActivity"
-            android:label="@string/label_edit" />
+            android:label="@string/label_edit"
+            android:windowSoftInputMode="adjustPan" />
     </application>
 
 </manifest>
