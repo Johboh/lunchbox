@@ -50,7 +50,7 @@ class EditActivity : AppCompatActivity() {
 
         // Setup list and adapters
         val viewModel = ViewModelProviders.of(this)[EditViewModel::class.java]
-        val adapter = ContentAdapter(this) { content -> saveAndClose(viewModel, content) }
+        val adapter = ContentAdapter(this) { content -> box_content_input.setText(content) }
         list.adapter = adapter
         list.layoutManager = LinearLayoutManager(this)
 
