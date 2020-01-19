@@ -20,7 +20,7 @@ class AddActivity : AppCompatActivity() {
                 GlobalScope.async {
                     val box = Box(
                         box_name_input.text.toString(),
-                        State.ELSE,
+                        State.FRIDGE,
                         System.currentTimeMillis(),
                         box_content_input.text.toString()
                     )
