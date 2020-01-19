@@ -1,5 +1,6 @@
 package com.fjun.lunchbox.adapter
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import java.lang.String.format
@@ -59,7 +60,9 @@ class SectionedAdapter(private val dropCallback: (fromPosition: Int, fromId: Sho
     override fun getItemId(position: Int): Long {
         val holderWithOffset = holderForPosition(position)
         val holder = holderWithOffset.holder
-        return holder.adapter.getItemId(position - holderWithOffset.offset) + holder.adapter.hashCode()
+        val x = holder.adapter.getItemId(position - holderWithOffset.offset)
+        Log.d("Lunchbox", format("Position: %d, id: %d", position, x))
+        return x
     }
 
     override fun getItemCount(): Int {

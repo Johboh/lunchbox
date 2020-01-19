@@ -61,7 +61,7 @@ class BoxesAdapter internal constructor(
         boxHolder.bind(box)
     }
 
-    override fun getItemId(position: Int) = boxes[position].uid + hashCode()
+    override fun getItemId(position: Int) = boxes[position].uid
 
     internal fun setBoxes(boxes: List<Box>) {
         this.boxes = boxes
