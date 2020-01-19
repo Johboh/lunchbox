@@ -19,4 +19,5 @@
     <string name="label_add_new">Add new Lunchbox</string>
     <string name="label_edit">Edit Lunchbox</string>
     <string name="action_delete">Delete</string>
+    <string name="content_select">Select</string>
 </resources>
