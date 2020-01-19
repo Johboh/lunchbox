@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
                 // If we are transitioning from else to any other state, ask for food content.
                 // Else only update if change in state (keeping timestamp)
                 if (box.state == State.ELSE && (newState == State.FREEZER || newState == State.FRIDGE)) {
-                    startActivity(EditActivity.createIntent(this, newState, box.uid))
+                    startActivity(EditActivity.createIntent(this, newState, box.content, box.uid))
                 } else if (box.state != newState) {
                     GlobalScope.async {
                         mainViewModel.setState(box, newState)

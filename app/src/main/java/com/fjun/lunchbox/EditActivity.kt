@@ -16,17 +16,21 @@ import kotlinx.coroutines.async
 class EditActivity : AppCompatActivity() {
 
     var boxUid: Long = 0
+    var content : String = ""
     var newState: State = State.ELSE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
 
+        content = intent.getStringExtra("CONTENT") ?: ""
         boxUid = savedInstanceState?.getLong("BOX_UID") ?: intent.getLongExtra("BOX_UID", 0)
         newState = (savedInstanceState?.getSerializable("STATE")
             ?: intent.getSerializableExtra("STATE")) as State
 
         val viewModel = ViewModelProviders.of(this)[EditViewModel::class.java]
+
+        box_content_input.setText(content)
 
         val adapter = ContentAdapter(this) { content -> saveAndClose(viewModel, content) }
         list.adapter = adapter
@@ -59,10 +63,11 @@ class EditActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun createIntent(context: Context, newState: State, boxUid: Long): Intent {
+        fun createIntent(context: Context, newState: State, content : String?, boxUid: Long): Intent {
             val intent = Intent(context, EditActivity::class.java)
             intent.putExtra("BOX_UID", boxUid)
             intent.putExtra("STATE", newState)
+            intent.putExtra("CONTENT", content)
             return intent
         }
     }
