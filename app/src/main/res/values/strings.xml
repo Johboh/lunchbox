@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">lunchbox</string>
+    <string name="app_name">Lunchbox</string>
     <string name="action_undo">Undo</string>
     <string name="box_section_title_freezer">In Freezer</string>
     <string name="box_section_title_else">Else</string>
