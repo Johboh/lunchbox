@@ -10,15 +10,7 @@
     <string name="header_title_unused">Unused</string>
     <string name="header_title_fridge">Fridge</string>
     <string name="update_button">Update</string>
-    <plurals name="box_title_with_content_fridge_first">
-        <item quantity="one">%s: With %s since %d day ago (and freezer %d)</item>
-        <item quantity="other">%s: With %s since %d days ago (and freezer %d)</item>
-    </plurals>
-    <plurals name="box_title_with_content_freezer_first">
-        <item quantity="one">%s: With %s since %d day ago (and fridge %d)</item>
-        <item quantity="other">%s: With %s since %d days ago (and fridge %d)</item>
-    </plurals>
-    <plurals name="box_title_with_content_no_second">
+    <plurals name="box_title_with_content">
         <item quantity="one">%s: With %s since %d day ago</item>
         <item quantity="other">%s: With %s since %d days ago</item>
     </plurals>

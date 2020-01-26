@@ -40,43 +40,21 @@ class BoxesAdapter internal constructor(
 
             text.text = when (box.state) {
                 State.FREEZER ->
-                    if (fridgeDays > 0) {
-                        text.context.resources.getQuantityString(
-                            R.plurals.box_title_with_content_freezer_first,
-                            freezerDays,
-                            box.name,
-                            box.content,
-                            freezerDays,
-                            fridgeDays
-                        )
-                    } else {
-                        text.context.resources.getQuantityString(
-                            R.plurals.box_title_with_content_no_second,
-                            freezerDays,
-                            box.name,
-                            box.content,
-                            freezerDays
-                        )
-                    }
+                    text.context.resources.getQuantityString(
+                        R.plurals.box_title_with_content,
+                        freezerDays,
+                        box.name,
+                        box.content,
+                        freezerDays
+                    )
                 State.FRIDGE ->
-                    if (freezerDays > 0) {
-                        text.context.resources.getQuantityString(
-                            R.plurals.box_title_with_content_fridge_first,
-                            fridgeDays,
-                            box.name,
-                            box.content,
-                            fridgeDays,
-                            freezerDays
-                        )
-                    } else {
-                        text.context.resources.getQuantityString(
-                            R.plurals.box_title_with_content_no_second,
-                            fridgeDays,
-                            box.name,
-                            box.content,
-                            fridgeDays
-                        )
-                    }
+                    text.context.resources.getQuantityString(
+                        R.plurals.box_title_with_content,
+                        fridgeDays,
+                        box.name,
+                        box.content,
+                        fridgeDays
+                    )
                 else -> text.context.getString(R.string.box_title_without_content, box.name)
             }
             overflow.setOnClickListener { _ -> onOverflowClick(box) }
