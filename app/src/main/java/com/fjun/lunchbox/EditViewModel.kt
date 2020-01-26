@@ -24,8 +24,17 @@ class EditViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * Set content and update state and timestamp.
      */
-    fun setContent(boxUid: Long, newState: State, content: String) =
-        boxDao.setContent(boxUid, newState, content, System.currentTimeMillis())
+    fun setContent(boxUid: Long, newState: State, content: String) {
+        boxDao.setContent(boxUid, content)
+        if (newState == State.FREEZER) {
+            boxDao.setInFreezer(boxUid, newState, System.currentTimeMillis())
+        } else if (newState == State.FRIDGE) {
+            boxDao.setInFridge(boxUid, newState, System.currentTimeMillis())
+        } else {
+            boxDao.setState(boxUid, newState)
+        }
+    }
+
 
     fun getBox(boxUid: Long): Box? = boxDao.getSingleBox(boxUid)
 

@@ -33,7 +33,7 @@ class BoxesAdapter internal constructor(
         private val originalBackground = itemView.background;
 
         fun bind(box: Box) {
-            val days = ((System.currentTimeMillis() - box.timestamp) / 86400000).toInt()
+            val days = ((System.currentTimeMillis() - box.timestampFreezer) / 86400000).toInt()
 
             text.text = when (box.state) {
                 State.FREEZER, State.FRIDGE -> text.context.resources.getQuantityString(

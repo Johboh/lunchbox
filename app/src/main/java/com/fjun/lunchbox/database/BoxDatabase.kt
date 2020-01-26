@@ -8,15 +8,19 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Box::class], version = 3)
+@Database(entities = [Box::class], version = 4)
 @TypeConverters(Converters::class)
 abstract class BoxDatabase : RoomDatabase() {
     abstract fun boxDao(): BoxDao
 
     companion object {
 
-        private val MIGRATION_TEMP = object : Migration(2, 3) {
+        private val MIGRATION_TEMP = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE boxes_new (name TEXT NOT NULL, timestamp_fridge INTEGER NOT NULL, uid INTEGER NOT NULL, state INTEGER NOT NULL, timestamp_freezer INTEGER NOT NULL, content TEXT, PRIMARY KEY(uid))")
+                database.execSQL("INSERT INTO boxes_new (name, timestamp_freezer, timestamp_fridge, state, content) SELECT name, timestamp, '0', state, content FROM boxes")
+                database.execSQL("DROP TABLE boxes")
+                database.execSQL("ALTER TABLE boxes_new RENAME TO boxes")
             }
         }
 

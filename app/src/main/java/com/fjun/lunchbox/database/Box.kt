@@ -11,7 +11,8 @@ import androidx.room.PrimaryKey
 data class Box(
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "state") val state: State,
-    @ColumnInfo(name = "timestamp") val timestamp: Long,
+    @ColumnInfo(name = "timestamp_freezer") val timestampFreezer: Long,
+    @ColumnInfo(name = "timestamp_fridge") val timestampFridge: Long,
     @ColumnInfo(name = "content") val content: String?
 ) {
     @PrimaryKey(autoGenerate = true)

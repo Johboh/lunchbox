@@ -25,6 +25,7 @@ class AddActivity : AppCompatActivity() {
                     val box = Box(
                         box_name_input.text.toString(),
                         State.FRIDGE,
+                        0,
                         System.currentTimeMillis(),
                         box_content_input.text.toString()
                     )

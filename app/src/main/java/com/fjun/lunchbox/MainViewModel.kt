@@ -19,9 +19,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return boxDao.getAllByState(state.state)
     }
 
-    fun setState(box: Box, newState: State) {
-        boxDao.setState(box.uid, newState, System.currentTimeMillis())
-    }
+    fun setState(box: Box, newState: State) = boxDao.setState(box.uid, newState)
 
     /**
      * Reset all values for the box to undo for the value in this box.
@@ -33,7 +31,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             if (boxDao.getSingleBox(box.uid) == null) {
                 boxDao.insert(box)
             } else {
-                boxDao.setContent(box.uid, box.state, box.content ?: "", box.timestamp)
+                boxDao.setContent(
+                    box.uid,
+                    box.state,
+                    box.content ?: "",
+                    box.timestampFreezer,
+                    box.timestampFridge
+                )
             }
         }
     }
