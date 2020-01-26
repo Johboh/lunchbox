@@ -33,16 +33,50 @@ class BoxesAdapter internal constructor(
         private val originalBackground = itemView.background;
 
         fun bind(box: Box) {
-            val days = ((System.currentTimeMillis() - box.timestampFreezer) / 86400000).toInt()
+            val freezerDays =
+                if (box.timestampFreezer > 0) ((System.currentTimeMillis() - box.timestampFreezer) / 86400000).toInt() else 0
+            val fridgeDays =
+                if (box.timestampFridge > 0) ((System.currentTimeMillis() - box.timestampFridge) / 86400000).toInt() else 0
 
             text.text = when (box.state) {
-                State.FREEZER, State.FRIDGE -> text.context.resources.getQuantityString(
-                    R.plurals.box_title_with_content,
-                    days,
-                    box.name,
-                    box.content,
-                    days
-                )
+                State.FREEZER ->
+                    if (fridgeDays > 0) {
+                        text.context.resources.getQuantityString(
+                            R.plurals.box_title_with_content_freezer_first,
+                            freezerDays,
+                            box.name,
+                            box.content,
+                            freezerDays,
+                            fridgeDays
+                        )
+                    } else {
+                        text.context.resources.getQuantityString(
+                            R.plurals.box_title_with_content_no_second,
+                            freezerDays,
+                            box.name,
+                            box.content,
+                            freezerDays
+                        )
+                    }
+                State.FRIDGE ->
+                    if (freezerDays > 0) {
+                        text.context.resources.getQuantityString(
+                            R.plurals.box_title_with_content_fridge_first,
+                            fridgeDays,
+                            box.name,
+                            box.content,
+                            fridgeDays,
+                            freezerDays
+                        )
+                    } else {
+                        text.context.resources.getQuantityString(
+                            R.plurals.box_title_with_content_no_second,
+                            fridgeDays,
+                            box.name,
+                            box.content,
+                            fridgeDays
+                        )
+                    }
                 else -> text.context.getString(R.string.box_title_without_content, box.name)
             }
             overflow.setOnClickListener { _ -> onOverflowClick(box) }
